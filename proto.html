@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>原型链</title>
+	</head>
+	<body>
+		<script type="text/javascript">
+//			第一种方式 :字面量
+			var o1={name:'o1'};
+			var o2=new Object({name:'o2'});
+			
+//			第二种方式:通过构造 函数
+			var m=function(name){
+				this.name=name;
+			}
+			var o3=new m(o3);
+			
+//			第三种方式:object.create
+			var p={name:'p'};
+			//Object.create 创造的o4是通过原型链 来连接的
+			var o4=Object.create(p);
+			
+			m.prototype.say=function(){
+				console.log('say hi');
+			}
+			
+			var o5=new m();
+			
+			//new 背后的工作原理
+			var new2=function(func){
+				var o=Object.create(func.prototype);
+				var k=func.call(o);
+				if(typeof k ==='object'){
+					return k
+				}else{
+					return o
+				}
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			function ajax(url, fnSucc, fnFaild) {
+				//1.创建Ajax对象
+				if(window.XMLHttpRequest) { //该判断是为了兼容ie6
+					var oAjax = new XMLHttpRequest();
+				} else {
+
+					var oAjax = new ActiveXObject("Microsoft.XMLHTTP");
+				};
+
+				//2.连接服务器
+				//open（方法，文件名，异步传输）
+				//'a.txt?t='+new Date().getTime()可以组织缓存
+				oAjax.open('GET', url, true);
+
+				//3.发送请求
+				oAjax.send();
+
+				//4.接收返回
+				oAjax.onreadystatechange = function() {
+					//	oAjax.readyState  //服务器和浏览器，进去到哪一步了
+					if(oAjax.readyState == 4) {
+						if(oAjax.status == 200) {
+							fnSucc(oAjax.responseText);
+						} else {
+							if(fnFaild) {
+								fnFaild(oAjax.status);
+							}
+						}
+
+					}
+				}
+			}
+			
+			//第二版本
+			if(opt.url){
+				var xhr=XMLHttpRequest?new XMLHttpRequest():new window.ActiveXObject('Microsoft.XMLHTTP');
+				var data=opt.data,
+					  url=opt.url;
+					  type=opt.type.toUpperCase(),
+					  dataArr=[];
+				for(var k in data){
+				  	dataArr.push(k+'='+data[k]);
+				}
+				if(type==='GET'){
+					url=url+'?'+dataArr.join('&');
+					xhr.open(type,url.replace(/\?$/g,''),true);
+					xhr.send();
+				}
+				if(type==='POST'){
+					xhr.open(type,url,true);
+					xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+					xhr.send(dataArr.join('&'));
+				}
+				xhr.onload=function(){
+					//206  适用于媒体资源
+					if(xhr.status===200||xhr.status===304){
+						var res;
+						if(opt.success&&opt.success instanceof Function){
+							res=xhr.responseText;
+							if(typeof res==='string'){
+								res=JSON.parse(res);
+								opt.success.call(xhr,res);
+							}
+						}
+					}else{
+						if(opt.error && opt.error instanceof Function){
+							opt.error.call(xhr,res);
+						}
+					}
+				}	
+			}
+			
+		</script>
+	</body>
+
+</html>
